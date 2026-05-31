@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="AML Quote"/>
+<meta name="theme-color" content="#185FA5"/>
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSI0MCIgZmlsbD0iIzE4NUZBNSIvPjx0ZXh0IHg9Ijk2IiB5PSI4OCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNTIiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj5BPC90ZXh0Pjx0ZXh0IHg9Ijk2IiB5PSIxNDgiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjYmJkZWZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBsZXR0ZXItc3BhY2luZz0iMyI+UVVPVEU8L3RleHQ+PC9zdmc+"/>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSI0MCIgZmlsbD0iIzE4NUZBNSIvPjx0ZXh0IHg9Ijk2IiB5PSI4OCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iNTIiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj5BPC90ZXh0Pjx0ZXh0IHg9Ijk2IiB5PSIxNDgiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjYmJkZWZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBsZXR0ZXItc3BhY2luZz0iMyI+UVVPVEU8L3RleHQ+PC9zdmc+"/>
+<title>Amalayon — Quote Builder</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#F0F4F9;color:#1a1a1a;min-height:100vh;}
+.nav{background:white;border-bottom:1px solid #E0E6EF;padding:0 2rem;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:100;}
+.nav-brand{display:flex;align-items:center;gap:12px;padding:10px 0;margin-right:2rem;}
+.nav-brand img{height:32px;width:auto;}
+.nav-tabs{display:flex;height:100%;}
+.nav-tab{padding:16px 20px;font-size:13.5px;font-weight:500;color:#777;cursor:pointer;border:none;background:none;border-bottom:2.5px solid transparent;transition:all 0.15s;white-space:nowrap;}
+.nav-tab:hover{color:#1a1a1a;}
+.nav-tab.active{color:#185FA5;border-bottom-color:#185FA5;}
+.nav-tab .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;}
+.page{display:none;padding:2rem 1rem;max-width:760px;margin:0 auto;}
+.page.active{display:block;}
+.card{background:white;border:1px solid #E0E6EF;border-radius:14px;padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+.sec{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1.1rem;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.row1{margin-bottom:14px;}
+.field label{display:block;font-size:13px;color:#555;margin-bottom:5px;font-weight:500;}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1px solid #D1D8E4;border-radius:8px;font-size:14px;color:#1a1a1a;outline:none;transition:border-color 0.15s;background:white;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#185FA5;box-shadow:0 0 0 3px rgba(24,95,165,0.08);}
+.field textarea{resize:vertical;min-height:80px;}
+.seg{display:flex;border:1px solid #D1D8E4;border-radius:8px;overflow:hidden;margin-bottom:1.1rem;}
+.seg button{flex:1;padding:10px 6px;font-size:12.5px;background:white;border:none;cursor:pointer;color:#666;font-weight:500;transition:all 0.15s;}
+.seg button.active{color:white;font-weight:600;}
+.seg button:not(:last-child){border-right:1px solid #D1D8E4;}
+.course-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
+.course-card{border:1.5px solid #E0E6EF;border-radius:10px;padding:14px;cursor:pointer;transition:all 0.15s;position:relative;}
+.course-card:hover{border-color:#1D9E75;background:#F5FFF9;}
+.course-card.sel{border-color:#1D9E75;background:#E8F8F2;}
+.course-card .cn{font-size:14px;font-weight:600;margin-bottom:2px;}
+.course-card .cs{font-size:11px;color:#888;margin-bottom:6px;}
+.course-card .cp{font-size:13px;font-weight:600;color:#1D9E75;}
+.course-card .chk{position:absolute;top:12px;right:12px;width:18px;height:18px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;}
+.course-card.sel .chk{background:#1D9E75;border-color:#1D9E75;}
+.course-card.sel .chk::after{content:"";width:6px;height:6px;background:white;border-radius:50%;}
+.cat-lbl{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;margin:14px 0 8px;}
+.cat-lbl:first-child{margin-top:0;}
+.flat-box{display:flex;align-items:center;gap:12px;background:#EEF4FB;border-radius:8px;padding:12px 16px;margin-bottom:1rem;}
+.flat-box label{font-size:13px;color:#444;font-weight:500;white-space:nowrap;}
+.flat-box input{max-width:90px;padding:7px 10px;border:1px solid #B5D4F4;border-radius:7px;font-size:14px;outline:none;}
+.rtable{width:100%;border-collapse:collapse;font-size:13px;}
+.rtable th{text-align:left;font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;padding:0 8px 10px 0;border-bottom:1px solid #E8EDF5;}
+.rtable th.r{text-align:right;}
+.rtable td{padding:7px 8px 7px 0;border-bottom:1px solid #F2F5FA;vertical-align:middle;}
+.rtable tr:last-child td{border-bottom:none;}
+.rtable td input{padding:5px 8px;border:1px solid #D1D8E4;border-radius:6px;font-size:13px;outline:none;background:white;}
+.rtable td input:focus{border-color:#185FA5;}
+.rtable td input:disabled{opacity:0.4;background:#f5f5f5;}
+.qi{width:54px;text-align:center;}
+.ri{width:68px;}
+.hi{width:60px;}
+.num{text-align:right;font-weight:500;}
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;margin-top:2px;}
+.tm{background:#DBEAFE;color:#1E40AF;}
+.ts{background:#FEF3C7;color:#92400E;}
+.tf{background:#D1FAE5;color:#065F46;}
+.role-sel{font-size:12.5px;padding:4px 6px;border:1px solid #D1D8E4;border-radius:6px;width:100%;margin-bottom:3px;}
+.xbtn{background:none;border:none;cursor:pointer;color:#bbb;font-size:20px;padding:0 2px;line-height:1;display:block;margin:0 auto;}
+.xbtn:hover{color:#E24B4A;}
+.add-btn{width:100%;margin-top:12px;padding:9px;font-size:13px;color:#185FA5;background:#F0F6FF;border:1.5px dashed #85B7EB;border-radius:8px;cursor:pointer;font-weight:500;}
+.add-btn:hover{background:#E6F1FB;}
+.ci-row{display:grid;grid-template-columns:1fr 90px 100px 36px;gap:8px;align-items:center;margin-bottom:8px;}
+.ci-row input{padding:8px 10px;border:1px solid #D1D8E4;border-radius:7px;font-size:13px;width:100%;outline:none;}
+.ci-row input:focus{border-color:#185FA5;}
+.ci-hdr{display:grid;grid-template-columns:1fr 90px 100px 36px;gap:8px;margin-bottom:6px;}
+.ci-hdr span{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;}
+.metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1.2rem;}
+.met{background:#F8FAFC;border:1px solid #E8EDF5;border-radius:10px;padding:14px;}
+.ml{font-size:11px;color:#999;margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;}
+.mv{font-size:22px;font-weight:700;color:#1a1a1a;}
+.mv.blue{color:#185FA5;}
+.li-row{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid #F2F5FA;font-size:13px;}
+.li-row:last-child{border-bottom:none;}
+.ll{color:#777;}
+.la{font-weight:600;}
+.tot-row{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-radius:10px;color:white;font-weight:700;font-size:16px;margin-top:12px;}
+.notes-list{display:flex;flex-direction:column;gap:7px;}
+.note-chk{display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;}
+.note-chk input[type=checkbox]{width:15px;height:15px;accent-color:#1D9E75;cursor:pointer;flex-shrink:0;}
+.gen-btn{width:100%;padding:14px;color:white;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:1rem;}
+.gen-btn:hover{filter:brightness(0.9);}
+.hist-empty{text-align:center;padding:3rem 0;color:#aaa;font-size:14px;}
+.hist-card{background:white;border:1px solid #E0E6EF;border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:10px;display:flex;align-items:center;gap:14px;}
+.hist-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.hist-info{flex:1;}
+.hist-co{font-size:14px;font-weight:600;}
+.hist-sub{font-size:12px;color:#888;margin-top:2px;}
+.hist-amt{font-size:16px;font-weight:700;color:#185FA5;}
+.hist-actions{display:flex;gap:8px;align-items:center;}
+.status-sel{font-size:12px;padding:4px 8px;border:1px solid #D1D8E4;border-radius:6px;background:white;cursor:pointer;outline:none;}
+.del-btn{background:none;border:none;cursor:pointer;color:#ccc;font-size:18px;padding:0 4px;}
+.del-btn:hover{color:#E24B4A;}
+.status-badge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:5px;font-weight:600;}
+.s-draft{background:#F1F5F9;color:#64748B;}
+.s-sent{background:#DBEAFE;color:#1E40AF;}
+.s-won{background:#D1FAE5;color:#065F46;}
+.s-lost{background:#FEE2E2;color:#991B1B;}
+.empty-row{padding:20px 0;text-align:center;color:#aaa;font-size:13px;}
+.scope-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
+.scope-row input{flex:1;padding:7px 10px;border:1px solid #D1D8E4;border-radius:6px;font-size:13px;outline:none;}
+.scope-row input:focus{border-color:#185FA5;}
+@media(max-width:560px){.row2{grid-template-columns:1fr;}.metrics{grid-template-columns:1fr 1fr;}.course-grid{grid-template-columns:1fr;}.ci-row{grid-template-columns:1fr 70px 80px 30px;}}
+
+/* ── Mobile nav improvements ── */
+@media(max-width:700px){
+  .nav{padding:0 10px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .nav-brand img{height:26px;}
+  .nav-brand{margin-right:10px;}
+  .nav-tab{padding:14px 12px;font-size:12.5px;}
+  .page{padding:1rem 0.75rem;}
+  body{padding-bottom:env(safe-area-inset-bottom);}
+  .gen-btn{padding:16px;font-size:16px;}
+}
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-brand">
+    <img src="data:image/jpeg;base64,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" alt="Amalayon"/>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('ehs')"><span class="dot" style="background:#1D9E75;"></span>EHS Training</button>
+    <button class="nav-tab" onclick="showPage('mp')"><span class="dot" style="background:#185FA5;"></span>Manpower</button>
+    <button class="nav-tab" onclick="showPage('con')"><span class="dot" style="background:#D85A30;"></span>Consulting</button>
+    <button class="nav-tab" onclick="showPage('hist')"><span class="dot" style="background:#888;"></span>報價記錄</button>
+  </div>
+</div>
+
+<!-- EHS TRAINING -->
+<div id="page-ehs" class="page active">
+  <div class="card">
+    <div class="sec">客戶資訊 Client Info</div>
+    <div class="row1 field"><label>公司名稱 Company Name</label><input type="text" id="e-co" placeholder="e.g. TSMC Arizona Corporation"/></div>
+    <div class="row2">
+      <div class="field"><label>部門 Department</label><input type="text" id="e-dept" placeholder="e.g. AMHS"/></div>
+      <div class="field"><label>報價單號 Quote #</label><input type="text" id="e-qnum" placeholder="e.g. AMAL-OT-007"/></div>
+    </div>
+    <div class="row1 field"><label>地址 Address</label><input type="text" id="e-addr" placeholder="5088 W Innovation Cir, Phoenix, AZ 85083"/></div>
+  </div>
+  <div class="card">
+    <div class="sec">選擇課程 Select Course</div>
+    <div class="cat-lbl">OSHA Construction</div>
+    <div class="course-grid">
+      <div class="course-card sel" data-id="osha10" onclick="eSelectCourse('osha10')"><div class="chk"></div><div class="cn">OSHA 10</div><div class="cs">Construction Safety — 10 Hours</div><div class="cp">$100 / person</div></div>
+      <div class="course-card" data-id="osha30" onclick="eSelectCourse('osha30')"><div class="chk"></div><div class="cn">OSHA 30</div><div class="cs">Construction Safety — 30 Hours</div><div class="cp">$200 / person</div></div>
+    </div>
+    <div class="cat-lbl">MEWP / Equipment Training</div>
+    <div class="course-grid">
+      <div class="course-card" data-id="scissor" onclick="eSelectCourse('scissor')"><div class="chk"></div><div class="cn">Scissor Lift</div><div class="cs">MEWP Safety Training</div><div class="cp">$100 / person</div></div>
+      <div class="course-card" data-id="aerial" onclick="eSelectCourse('aerial')"><div class="chk"></div><div class="cn">Aerial Lift</div><div class="cs">MEWP Safety Training</div><div class="cp">$100 / person</div></div>
+      <div class="course-card" data-id="boom" onclick="eSelectCourse('boom')"><div class="chk"></div><div class="cn">Boom Lift</div><div class="cs">MEWP Safety Training</div><div class="cp">$100 / person</div></div>
+      <div class="course-card" data-id="forklift" onclick="eSelectCourse('forklift')"><div class="chk"></div><div class="cn">Forklift</div><div class="cs">Powered Industrial Truck</div><div class="cp">$100 / person</div></div>
+    </div>
+    <div class="row2" style="margin-top:1rem;">
+      <div class="field"><label>授課語言 Language</label>
+        <div class="seg" id="e-lang-seg" style="margin-bottom:0;">
+          <button onclick="eSetLang('English')">English</button>
+          <button class="active" style="background:#1D9E75;color:white;" onclick="eSetLang('Mandarin')">中文</button>
+          <button onclick="eSetLang('Spanish')">Español</button>
+        </div>
+      </div>
+      <div class="field"><label>學員人數 Participants</label><input type="number" id="e-qty" value="10" min="1" oninput="eRecalc()"/></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>單價 Unit Price (USD)</label><input type="number" id="e-price" value="100" min="1" oninput="eRecalc()"/></div>
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label style="margin-bottom:8px;">包含項目 Inclusions</label>
+      <div class="notes-list">
+        <label class="note-chk"><input type="checkbox" id="e-n1" checked onchange="eRecalc()"> Card-Making fees are included</label>
+        <label class="note-chk"><input type="checkbox" id="e-n2" checked onchange="eRecalc()"> Small Class premium is included</label>
+        <label class="note-chk"><input type="checkbox" id="e-n3" onchange="eRecalc()"> Materials &amp; textbooks included</label>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec">報價預覽</div>
+    <div class="metrics">
+      <div class="met"><div class="ml">課程</div><div style="font-size:15px;font-weight:700;" id="e-prev-course">OSHA 10</div></div>
+      <div class="met"><div class="ml">語言</div><div style="font-size:15px;font-weight:700;" id="e-prev-lang">Mandarin</div></div>
+      <div class="met"><div class="ml">總額</div><div class="mv blue" id="e-total">$1,000</div></div>
+    </div>
+    <div class="tot-row" style="background:#1D9E75;"><span>Quote Total</span><span id="e-grand">$1,000.00</span></div>
+    <button class="gen-btn" style="background:#1D9E75;" onclick="eGenPDF()">⬇ 生成並下載 PDF Quote</button>
+  </div>
+</div>
+
+<!-- MANPOWER -->
+<div id="page-mp" class="page">
+  <div class="card">
+    <div class="sec">客戶資訊 Client Info</div>
+    <div class="row1 field"><label>公司名稱 Company Name</label><input type="text" id="m-co" placeholder="e.g. NUUO US INC"/></div>
+    <div class="row2">
+      <div class="field"><label>部門 / 地址第二行</label><input type="text" id="m-dept" placeholder="e.g. 15179 Sierra Bonita Lane"/></div>
+      <div class="field"><label>報價單號 Quote #</label><input type="text" id="m-qnum" placeholder="e.g. AMAL-MP-001"/></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>城市州 City, State, ZIP</label><input type="text" id="m-city" placeholder="e.g. Chino, CA 91710"/></div>
+      <div class="field"><label>County / Region (選填)</label><input type="text" id="m-county" placeholder="e.g. San Bernardino County, USA"/></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>專案名稱 Project</label><input type="text" id="m-proj" placeholder="e.g. Manpower Support – Electrical Team"/></div>
+      <div class="field"><label>合約期間 Project Period</label><input type="text" id="m-period" placeholder="e.g. One Month (173.33 hrs/worker)"/></div>
+    </div>
+    <div class="row1 field"><label>附加說明 Requirements / Special Notes (選填)</label><textarea id="m-req" placeholder="e.g. Requirements: Lory GMS complete scope (Cable Tray, Cable pulling...) finished in one month (12/01/2025 - 12/31/2025)"></textarea></div>
+    <div class="row1 field"><label>加班政策 Overtime Policy (選填)</label><textarea id="m-overtime" placeholder="e.g. If weekly working hours exceed 40 hours, overtime will be charged at 1.5x regular rate ($85.00 x 1.5 = $127.50 per hour)." style="min-height:56px;"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="sec">Scope of Work</div>
+    <div class="row1 field"><label>Scope 描述 (首行)</label><input type="text" id="m-scope-intro" placeholder="e.g. Provide qualified manpower for electrical services, including installation of conduit and terminations in cleanroom."/></div>
+
+    <div class="sec" style="margin-top:0.75rem;margin-bottom:0.5rem;">Scope 項目 — 常用選項</div>
+    <div class="notes-list" style="margin-bottom:10px;">
+      <label class="note-chk"><input type="checkbox" class="m-scope-preset" value="Journeyman-level electrical scope support"> Journeyman-level electrical scope support</label>
+      <label class="note-chk"><input type="checkbox" class="m-scope-preset" value="Foreman-level supervision and coordination"> Foreman-level supervision and coordination</label>
+      <label class="note-chk"><input type="checkbox" class="m-scope-preset" value="General material handling and task-based support"> General material handling and task-based support</label>
+      <label class="note-chk"><input type="checkbox" class="m-scope-preset" value="Apprentice-level electrical support"> Apprentice-level electrical support</label>
+      <label class="note-chk"><input type="checkbox" class="m-scope-preset" value="Site safety compliance and monitoring"> Site safety compliance and monitoring</label>
+    </div>
+    <div class="sec" style="margin-bottom:0.5rem;">其他自訂項目 Custom Bullet Points</div>
+    <div id="m-scope-items"></div>
+    <button class="add-btn" style="margin-top:6px;" onclick="mAddScope()">+ 新增自訂項目</button>
+
+    <div class="sec" style="margin-top:1.2rem;margin-bottom:0.5rem;">人員資格要求 Personnel Qualifications</div>
+    <div style="font-size:12px;color:#aaa;margin-bottom:8px;">All assigned personnel have completed:</div>
+    <div class="notes-list" style="margin-bottom:10px;">
+      <label class="note-chk"><input type="checkbox" class="m-qual-preset" checked value="OSHA 10-Hour Safety Training"> OSHA 10-Hour Safety Training</label>
+      <label class="note-chk"><input type="checkbox" class="m-qual-preset" value="OSHA 30-Hour Safety Training"> OSHA 30-Hour Safety Training</label>
+      <label class="note-chk"><input type="checkbox" class="m-qual-preset" checked value="NFPA 70E Electrical Safety Training"> NFPA 70E Electrical Safety Training</label>
+      <label class="note-chk"><input type="checkbox" class="m-qual-preset" checked value="Valid U.S. Driver's License"> Valid U.S. Driver's License</label>
+      <label class="note-chk"><input type="checkbox" class="m-qual-preset" checked value="Legal authorization to work in the United States"> Legal authorization to work in the United States</label>
+    </div>
+    <div class="sec" style="margin-bottom:0.5rem;">其他自訂資格 Custom Qualifications</div>
+    <div id="m-qual-items"></div>
+    <button class="add-btn" style="margin-top:6px;" onclick="mAddQual()">+ 新增自訂資格</button>
+  </div>
+
+  <div class="card">
+    <div class="sec">計費模式 Billing Mode</div>
+    <div class="seg" id="m-mode-seg">
+      <button class="active" style="background:#185FA5;color:white;" onclick="mSetMode('hours')">時薪 × 人數 × 小時數</button>
+      <button onclick="mSetMode('people')">時薪 × 人數</button>
+      <button onclick="mSetMode('flat')">特別合約均價</button>
+    </div>
+    <div id="m-flat-box" class="flat-box" style="display:none;">
+      <label>合約均價 ($/person)</label>
+      <input type="number" id="m-flat" value="85" min="1" oninput="mRecalc()"/>
+      <span style="font-size:13px;color:#666;">所有人員套用此均價</span>
+    </div>
+    <div class="sec" style="margin-top:0.25rem;">人員配置 Staffing Roster</div>
+    <table class="rtable">
+      <thead><tr>
+        <th style="width:36%;">崗位 Role</th>
+        <th style="width:12%;">人數</th>
+        <th id="m-th-rate" style="width:15%;">時薪 /hr</th>
+        <th id="m-th-hrs" style="width:13%;display:none;">小時</th>
+        <th class="r" style="width:18%;">金額</th>
+        <th style="width:6%;"></th>
+      </tr></thead>
+      <tbody id="m-tbody"></tbody>
+    </table>
+    <button class="add-btn" onclick="mAddRole()">+ 新增崗位 Add Role</button>
+  </div>
+
+  <div class="card">
+    <div class="sec">報價預覽</div>
+    <div class="metrics">
+      <div class="met"><div class="ml">總人數</div><div class="mv" id="m-s-ppl">0</div></div>
+      <div class="met"><div class="ml">崗位數</div><div class="mv" id="m-s-roles">0</div></div>
+      <div class="met"><div class="ml">總額</div><div class="mv blue" id="m-s-total">$0</div></div>
+    </div>
+    <div id="m-line-items"></div>
+    <div class="tot-row" style="background:#185FA5;"><span>Quote Total</span><span id="m-grand">$0.00</span></div>
+    <button class="gen-btn" style="background:#185FA5;" onclick="mGenPDF()">⬇ 生成並下載 PDF Quote</button>
+  </div>
+</div>
+
+<!-- CONSULTING -->
+<div id="page-con" class="page">
+  <div class="card">
+    <div class="sec">客戶資訊 Client Info</div>
+    <div class="row1 field"><label>公司名稱 Company Name</label><input type="text" id="c-co" placeholder="e.g. Phoenix Children Hospital"/></div>
+    <div class="row2">
+      <div class="field"><label>部門 Department</label><input type="text" id="c-dept" placeholder="e.g. Facilities"/></div>
+      <div class="field"><label>報價單號 Quote #</label><input type="text" id="c-qnum" placeholder="e.g. AMAL-CS-001"/></div>
+    </div>
+    <div class="row1 field"><label>地址 Address</label><input type="text" id="c-addr" placeholder="Client address"/></div>
+  </div>
+  <div class="card">
+    <div class="sec">專案描述 Project</div>
+    <div class="row1 field"><label>專案名稱 Project Name</label><input type="text" id="c-proj" placeholder="e.g. Site Safety Audit — Phase 1"/></div>
+    <div class="row1 field"><label>備注 Notes (選填)</label><textarea id="c-notes" placeholder="Scope of work, special conditions, etc." style="min-height:60px;"></textarea></div>
+  </div>
+  <div class="card">
+    <div class="sec">服務項目 Line Items</div>
+    <div class="ci-hdr"><span>服務描述</span><span style="text-align:center;">數量</span><span>單價</span><span></span></div>
+    <div id="c-items"></div>
+    <button class="add-btn" onclick="cAddItem()">+ 新增項目 Add Line Item</button>
+  </div>
+  <div class="card">
+    <div class="sec">報價預覽</div>
+    <div class="metrics">
+      <div class="met"><div class="ml">項目數</div><div class="mv" id="c-s-count">0</div></div>
+      <div class="met"><div class="ml">專案</div><div style="font-size:13px;font-weight:600;margin-top:4px;color:#555;" id="c-s-proj">—</div></div>
+      <div class="met"><div class="ml">總額</div><div class="mv blue" id="c-s-total">$0</div></div>
+    </div>
+    <div id="c-line-items"></div>
+    <div class="tot-row" style="background:#D85A30;"><span>Quote Total</span><span id="c-grand">$0.00</span></div>
+    <button class="gen-btn" style="background:#D85A30;" onclick="cGenPDF()">⬇ 生成並下載 PDF Quote</button>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div id="page-hist" class="page">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem;">
+      <div class="sec" style="margin:0;">報價記錄 Quote History</div>
+      <button onclick="clearHistory()" style="font-size:12px;color:#aaa;background:none;border:none;cursor:pointer;">全部清除</button>
+    </div>
+    <div id="hist-list"><div class="hist-empty">尚無報價記錄<br><span style="font-size:12px;">每次生成 PDF 後自動儲存</span></div></div>
+  </div>
+</div>
+
+<script>
+const LOGO_B64 = "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";
+
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById("page-"+id).classList.add("active");
+  ["ehs","mp","con","hist"].forEach((t,i)=>{if(t===id)document.querySelectorAll(".nav-tab")[i].classList.add("active");});
+  if(id==="hist")renderHistory();
+}
+
+// ===== EHS =====
+const ECOURSES={
+  osha10:{name:"OSHA 10",sub:"Construction Safety — 10 Hours",price:100,desc:"OSHA Construction 10 Hours Training"},
+  osha30:{name:"OSHA 30",sub:"Construction Safety — 30 Hours",price:200,desc:"OSHA Construction 30 Hours Training"},
+  scissor:{name:"Scissor Lift",sub:"MEWP Safety Training",price:100,desc:"Scissor Lift Safety Training (MEWP)"},
+  aerial:{name:"Aerial Lift",sub:"MEWP Safety Training",price:100,desc:"Aerial Lift Safety Training (MEWP)"},
+  boom:{name:"Boom Lift",sub:"MEWP Safety Training",price:100,desc:"Boom Lift Safety Training (MEWP)"},
+  forklift:{name:"Forklift",sub:"Powered Industrial Truck",price:100,desc:"Forklift / Powered Industrial Truck Safety Training"},
+};
+let eCourse="osha10",eLang="Mandarin";
+function eSelectCourse(id){
+  eCourse=id;
+  document.querySelectorAll(".course-card").forEach(c=>c.classList.toggle("sel",c.dataset.id===id));
+  document.getElementById("e-price").value=ECOURSES[id].price;
+  eRecalc();
+}
+function eSetLang(l){
+  eLang=l;
+  document.querySelectorAll("#e-lang-seg button").forEach((b,i)=>{
+    const a=["English","Mandarin","Spanish"][i]===l;
+    b.classList.toggle("active",a);b.style.background=a?"#1D9E75":"";b.style.color=a?"white":"";
+  });
+  eRecalc();
+}
+function eNotes(){
+  const n=[];
+  if(document.getElementById("e-n1").checked)n.push("Card-Making fees are included.");
+  if(document.getElementById("e-n2").checked)n.push("Small Class premium is included.");
+  if(document.getElementById("e-n3").checked)n.push("Materials & textbooks included.");
+  return n;
+}
+function eRecalc(){
+  const qty=parseInt(document.getElementById("e-qty").value)||0;
+  const up=parseFloat(document.getElementById("e-price").value)||0;
+  const total=qty*up;
+  const c=ECOURSES[eCourse];
+  document.getElementById("e-prev-course").textContent=c.name;
+  document.getElementById("e-prev-lang").textContent=eLang;
+  document.getElementById("e-total").textContent="$"+total.toLocaleString("en-US",{minimumFractionDigits:0});
+  document.getElementById("e-grand").textContent="$"+total.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+// ===== MANPOWER =====
+const MPRESETS=[
+  {id:"pm",n:"Project Manager",cat:"Management",r:120},
+  {id:"cm",n:"Construction Manager",cat:"Management",r:120},
+  {id:"sfp",n:"Safety Professional",cat:"Safety",r:100},
+  {id:"sfr",n:"Safety Rep",cat:"Safety",r:90},
+  {id:"sup",n:"Superintendent",cat:"Supervision",r:110},
+  {id:"gf",n:"General Foreman",cat:"Supervision",r:100},
+  {id:"fm",n:"Foreman",cat:"Supervision",r:90},
+  {id:"jm",n:"Journeyman",cat:"Field",r:85},
+  {id:"ap",n:"Apprentice",cat:"Field",r:80},
+  {id:"sp",n:"Spotter",cat:"Field",r:80},
+  {id:"lg",n:"Logistics / Tramx",cat:"Field",r:80},
+];
+const MCTAG={Management:"tm",Safety:"tm",Supervision:"ts",Field:"tf"};
+let mMode="hours",mRoster=[],mNid=0,mScopes=[],mQuals=[],mSid=0,mQid=0;
+
+function mSetMode(m){
+  mMode=m;
+  document.querySelectorAll("#m-mode-seg button").forEach((b,i)=>{
+    const a=["hours","people","flat"][i]===m;
+    b.classList.toggle("active",a);b.style.background=a?"#185FA5":"";b.style.color=a?"white":"";
+  });
+  document.getElementById("m-flat-box").style.display=m==="flat"?"flex":"none";
+  document.getElementById("m-th-hrs").style.display=m==="hours"?"":"none";
+  mRenderRoster();mRecalc();
+}
+function mAddScope(){mScopes.push({uid:mSid++,text:""});mRenderScopes();}
+function mRemoveScope(uid){mScopes=mScopes.filter(x=>x.uid!==uid);mRenderScopes();}
+function mRenderScopes(){
+  const el=document.getElementById("m-scope-items");
+  if(!mScopes.length){el.innerHTML="";return;}
+  el.innerHTML=mScopes.map(s=>`<div class="scope-row"><input type="text" placeholder="e.g. Foreman supervision and coordination" value="${s.text}" oninput="mUpdScope(${s.uid},this.value)"/><button class="xbtn" onclick="mRemoveScope(${s.uid})">×</button></div>`).join("");
+}
+function mUpdScope(uid,v){const s=mScopes.find(x=>x.uid===uid);if(s)s.text=v;}
+function mAddQual(){mQuals.push({uid:mQid++,text:""});mRenderQuals();}
+function mRemoveQual(uid){mQuals=mQuals.filter(x=>x.uid!==uid);mRenderQuals();}
+function mRenderQuals(){
+  const el=document.getElementById("m-qual-items");
+  if(!mQuals.length){el.innerHTML="";return;}
+  el.innerHTML=mQuals.map(q=>`<div class="scope-row"><input type="text" placeholder="e.g. OSHA 10-Hour Safety Training" value="${q.text}" oninput="mUpdQual(${q.uid},this.value)"/><button class="xbtn" onclick="mRemoveQual(${q.uid})">×</button></div>`).join("");
+}
+function mUpdQual(uid,v){const q=mQuals.find(x=>x.uid===uid);if(q)q.text=v;}
+function mAddRole(pid){
+  const p=MPRESETS.find(x=>x.id===pid)||MPRESETS[0];
+  mRoster.push({uid:mNid++,pid:p.id,n:p.n,cat:p.cat,r:p.r,qty:1,hrs:173.33});
+  mRenderRoster();mRecalc();
+}
+function mRemoveRole(uid){mRoster=mRoster.filter(x=>x.uid!==uid);mRenderRoster();mRecalc();}
+function mChPreset(uid,pid){
+  const p=MPRESETS.find(x=>x.id===pid),row=mRoster.find(x=>x.uid===uid);
+  if(p&&row){row.pid=pid;row.n=p.n;row.cat=p.cat;row.r=p.r;}
+  mRenderRoster();mRecalc();
+}
+function mUpd(uid,f,v){const row=mRoster.find(x=>x.uid===uid);if(row)row[f]=parseFloat(v)||0;mRecalc();}
+function mRowAmt(row){
+  const fr=parseFloat(document.getElementById("m-flat").value)||85;
+  if(mMode==="flat")return row.qty*fr;
+  if(mMode==="hours")return row.qty*row.r*row.hrs;
+  return row.qty*row.r;
+}
+function mRenderRoster(){
+  const tb=document.getElementById("m-tbody");
+  if(!mRoster.length){tb.innerHTML=`<tr><td colspan="6"><div class="empty-row">點擊下方按鈕新增崗位</div></td></tr>`;return;}
+  tb.innerHTML=mRoster.map(row=>{
+    const amt=mRowAmt(row);
+    const hcell=mMode==="hours"?`<td><input class="hi" type="number" value="${row.hrs}" min="1" step="0.01" oninput="mUpd(${row.uid},'hrs',this.value)"/></td>`:"";
+    return `<tr>
+      <td><select class="role-sel" onchange="mChPreset(${row.uid},this.value)">${MPRESETS.map(p=>`<option value="${p.id}"${p.id===row.pid?" selected":""}>${p.n}</option>`).join("")}</select>
+      <span class="tag ${MCTAG[row.cat]||"tf"}">${row.cat}</span></td>
+      <td><input class="qi" type="number" value="${row.qty}" min="1" oninput="mUpd(${row.uid},'qty',this.value)"/></td>
+      <td><input class="ri" type="number" value="${row.r}" min="1" step="0.01" oninput="mUpd(${row.uid},'r',this.value)"${mMode==="flat"?" disabled":""}/></td>
+      ${hcell}
+      <td class="num">$${amt.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+      <td><button class="xbtn" onclick="mRemoveRole(${row.uid})">×</button></td>
+    </tr>`;
+  }).join("");
+}
+function mRecalc(){
+  let total=0,ppl=0;
+  mRoster.forEach(r=>{total+=mRowAmt(r);ppl+=r.qty;});
+  document.getElementById("m-s-ppl").textContent=ppl;
+  document.getElementById("m-s-roles").textContent=mRoster.length;
+  document.getElementById("m-s-total").textContent="$"+total.toLocaleString("en-US",{minimumFractionDigits:0});
+  document.getElementById("m-grand").textContent="$"+total.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fr=parseFloat(document.getElementById("m-flat").value)||85;
+  document.getElementById("m-line-items").innerHTML=mRoster.length===0?"":mRoster.map(row=>{
+    const amt=mRowAmt(row);
+    const desc=mMode==="flat"?`${row.qty}×$${fr}/person`:mMode==="hours"?`${row.qty}×$${row.r}/hr×${row.hrs}h`:`${row.qty}×$${row.r}/hr`;
+    return `<div class="li-row"><span class="ll">${row.n} <span style="color:#ccc;font-size:12px;">${desc}</span></span><span class="la">$${amt.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`;
+  }).join("");
+}
+
+// ===== CONSULTING =====
+let cItems=[],cNid=0;
+function cAddItem(){cItems.push({uid:cNid++,desc:"",qty:1,rate:0});cRenderItems();cRecalc();}
+function cRemoveItem(uid){cItems=cItems.filter(x=>x.uid!==uid);cRenderItems();cRecalc();}
+function cUpd(uid,f,v){const item=cItems.find(x=>x.uid===uid);if(item){item[f]=f==="desc"?v:(parseFloat(v)||0);}cRecalc();}
+function cRenderItems(){
+  const el=document.getElementById("c-items");
+  if(!cItems.length){el.innerHTML=`<div class="empty-row" style="margin-bottom:8px;">點擊下方按鈕新增服務項目</div>`;return;}
+  el.innerHTML=cItems.map(item=>`<div class="ci-row">
+    <input type="text" placeholder="服務描述" value="${item.desc}" oninput="cUpd(${item.uid},'desc',this.value)"/>
+    <input type="number" placeholder="Qty" value="${item.qty||""}" min="0" step="0.5" oninput="cUpd(${item.uid},'qty',this.value)" style="text-align:center;"/>
+    <input type="number" placeholder="$ Rate" value="${item.rate||""}" min="0" oninput="cUpd(${item.uid},'rate',this.value)"/>
+    <button class="xbtn" onclick="cRemoveItem(${item.uid})">×</button>
+  </div>`).join("");
+}
+function cRecalc(){
+  let total=0;cItems.forEach(i=>{total+=(i.qty||0)*(i.rate||0);});
+  const proj=document.getElementById("c-proj").value||"—";
+  document.getElementById("c-s-count").textContent=cItems.length;
+  document.getElementById("c-s-proj").textContent=proj.length>22?proj.slice(0,22)+"…":proj;
+  document.getElementById("c-s-total").textContent="$"+total.toLocaleString("en-US",{minimumFractionDigits:0});
+  document.getElementById("c-grand").textContent="$"+total.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById("c-line-items").innerHTML=cItems.length===0?"":cItems.map(item=>{
+    const amt=(item.qty||0)*(item.rate||0);
+    return `<div class="li-row"><span class="ll">${item.desc||"(未填描述)"} <span style="color:#ccc;font-size:12px;">${item.qty}×$${item.rate}</span></span><span class="la">$${amt.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`;
+  }).join("");
+}
+
+// ===== HISTORY =====
+function getHistory(){try{return JSON.parse(localStorage.getItem("amalayon-quotes")||"[]");}catch{return [];}}
+function saveToHistory(e){const h=getHistory();h.unshift({...e,id:Date.now(),status:"draft",date:today()});localStorage.setItem("amalayon-quotes",JSON.stringify(h.slice(0,100)));}
+function updateStatus(id,status){const h=getHistory();const i=h.findIndex(x=>x.id===id);if(i>=0){h[i].status=status;localStorage.setItem("amalayon-quotes",JSON.stringify(h));}}
+function deleteQuote(id){localStorage.setItem("amalayon-quotes",JSON.stringify(getHistory().filter(x=>x.id!==id)));renderHistory();}
+function clearHistory(){if(confirm("確定要清除所有記錄嗎？")){localStorage.removeItem("amalayon-quotes");renderHistory();}}
+const SL={draft:"Draft",sent:"Sent",won:"Won",lost:"Lost"};
+const SB={draft:"s-draft",sent:"s-sent",won:"s-won",lost:"s-lost"};
+function renderHistory(){
+  const h=getHistory();const el=document.getElementById("hist-list");
+  if(!h.length){el.innerHTML="<div class='hist-empty'>尚無報價記錄<br><span style='font-size:12px;'>每次生成 PDF 後自動儲存</span></div>";return;}
+  const TC={ehs:"#1D9E75",mp:"#185FA5",con:"#D85A30"};
+  const TL={ehs:"EHS Training",mp:"Manpower",con:"Consulting"};
+  el.innerHTML=h.map(q=>`<div class="hist-card">
+    <div class="hist-dot" style="background:${TC[q.type]||"#999"};"></div>
+    <div class="hist-info"><div class="hist-co">${q.company||"Unknown"} <span style="font-size:11px;color:#aaa;font-weight:400;">— ${q.qnum||""}</span></div>
+    <div class="hist-sub">${TL[q.type]||""} · ${q.date} · <span class="status-badge ${SB[q.status]}">${SL[q.status]}</span></div></div>
+    <div class="hist-amt">$${(q.total||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+    <div class="hist-actions">
+      <select class="status-sel" onchange="updateStatus(${q.id},this.value);renderHistory();">${Object.entries(SL).map(([k,v])=>`<option value="${k}"${q.status===k?" selected":""}>${v}</option>`).join("")}</select>
+      <button class="del-btn" onclick="deleteQuote(${q.id})">×</button>
+    </div>
+  </div>`).join("");
+}
+
+// ===== PDF UTILS =====
+function today(){const d=new Date();return(d.getMonth()+1).toString().padStart(2,"0")+"/"+d.getDate().toString().padStart(2,"0")+"/"+d.getFullYear();}
+function fmtDate(){const d=new Date();return d.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});}
+
+function addLogo(doc,x,y,w){
+  try{doc.addImage(LOGO_B64,"JPEG",x,y,w,w*0.35);}catch(e){
+    doc.setFont("helvetica","bold");doc.setFontSize(18);doc.setTextColor(20,20,20);
+    doc.text("Amalayon",x,y+14);
+  }
+}
+
+// ===== EHS PDF =====
+function eGenPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:"pt",format:"letter"});
+  const co=document.getElementById("e-co").value||"Client Company";
+  const dept=document.getElementById("e-dept").value||"";
+  const addr=document.getElementById("e-addr").value||"";
+  const qn=document.getElementById("e-qnum").value||"AMAL-OT-XXX";
+  const qty=parseInt(document.getElementById("e-qty").value)||0;
+  const up=parseFloat(document.getElementById("e-price").value)||0;
+  const total=qty*up;
+  const c=ECOURSES[eCourse];
+  const desc=c.desc+" in "+eLang;
+  const notes=eNotes();
+  const W=612,M=50;let y=M;
+
+  // Logo top right
+  addLogo(doc,W-M-160,y,160);
+
+  // QUOTE title centered
+  doc.setFont("helvetica","bold");doc.setFontSize(22);doc.setTextColor(20,20,20);
+  doc.text("QUOTE",W/2,y+30,{align:"center"});
+
+  y+=70;
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+  doc.text("Date: "+fmtDate(),M,y);y+=14;
+  doc.text("Quote No.: "+qn,M,y);y+=14;
+  doc.text("To: "+co,M,y);y+=14;
+  if(dept){doc.text(dept,M,y);y+=14;}
+  if(addr){doc.text(addr,M,y);y+=14;}
+  doc.text("Service: "+c.name+" ("+eLang+")",M,y);y+=28;
+
+  // Table header
+  doc.setFillColor(220,220,220);doc.rect(M,y,W-M*2,18,"F");
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(20,20,20);
+  const C=[M+4,M+262,M+318,M+390,W-M-4];
+  doc.text("Description",C[0],y+13);doc.text("Unit",C[1],y+13);doc.text("Qty",C[2],y+13);
+  doc.text("Rate (USD)",C[3],y+13);doc.text("Total (USD)",C[4],y+13,{align:"right"});
+  y+=18;
+  // Check if desc fits in column, wrap if needed
+  const descMaxW=C[1]-C[0]-8;
+  const descLines=doc.splitTextToSize(desc,descMaxW);
+  const rowH=Math.max(18,descLines.length*13+6);
+  doc.setFillColor(248,248,248);doc.rect(M,y,W-M*2,rowH,"F");
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(20,20,20);
+  doc.text(descLines,C[0],y+13);
+  doc.text("Person",C[1],y+rowH/2+4);
+  doc.text(String(qty),C[2],y+rowH/2+4);
+  doc.text("$"+up.toFixed(2),C[3],y+rowH/2+4);
+  doc.text("$"+total.toLocaleString("en-US",{minimumFractionDigits:2}),C[4],y+rowH/2+4,{align:"right"});
+  y+=rowH;
+  doc.setDrawColor(200,200,200);doc.setLineWidth(0.5);doc.line(M,y,W-M,y);y+=16;
+
+  if(notes.length){
+    doc.setFontSize(9);doc.setTextColor(80,80,80);
+    notes.forEach((n,i)=>{doc.text("• "+n,M,y);y+=13;});
+    y+=6;
+  }
+
+  // Totals
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(20,20,20);
+  doc.text("Subtotal: "+total.toLocaleString("en-US",{minimumFractionDigits:2}),M,y);y+=14;
+  doc.text("Tax: N/A",M,y);y+=14;
+  doc.text("Total: "+total.toLocaleString("en-US",{minimumFractionDigits:2}),M,y);y+=16;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);doc.setTextColor(80,80,80);
+  doc.text("Payment Terms: Net 30 days after invoice date or as mutually agreed.",M,y);y+=12;
+  doc.text("Validity: This quote is valid for 30 days from the date issued.",M,y);y+=30;
+
+  // Signature block — pinned near bottom
+  const sigY2=Math.max(y+20, 660);
+  const sigX=W/2+20;
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+  doc.text("Prepared by: Amalayon LLC",sigX,sigY2);
+  doc.text("23025 N 15th Ave, Suite 205, Phoenix AZ 85027",sigX,sigY2+13);
+  doc.text("Authorized Signature: ___________________________",sigX,sigY2+30);
+  doc.text("Date: ___________________________",sigX,sigY2+46);
+
+  doc.save(qn+"-EHS-Quote.pdf");
+  saveToHistory({type:"ehs",company:co,qnum:qn,total,service:c.name+" ("+eLang+")"});
+}
+
+// ===== MANPOWER PDF (new format matching your sample) =====
+function mGenPDF(){
+  if(!mRoster.length){alert("請先新增至少一個崗位");return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:"pt",format:"letter"});
+  const co=document.getElementById("m-co").value||"Client Company";
+  const dept=document.getElementById("m-dept").value||"";
+  const city=document.getElementById("m-city").value||"";
+  const county=document.getElementById("m-county").value||"";
+  const qn=document.getElementById("m-qnum").value||"AMAL-MP-001";
+  const proj=document.getElementById("m-proj").value||"Manpower Support";
+  const period=document.getElementById("m-period").value||"";
+  const req=document.getElementById("m-req").value||"";
+  const scopeIntro=document.getElementById("m-scope-intro").value||"";
+  const fr=parseFloat(document.getElementById("m-flat").value)||85;
+  const W=612,M=50;let y=M;
+
+  // Logo top right
+  addLogo(doc,W-M-160,y,160);
+
+  // QUOTE centered
+  doc.setFont("helvetica","bold");doc.setFontSize(22);doc.setTextColor(20,20,20);
+  doc.text("QUOTE",W/2,y+30,{align:"center"});
+  y+=70;
+
+  // Client block
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(40,40,40);
+  doc.text("Date: "+fmtDate(),M,y);y+=14;
+  doc.text("Quote No.: "+qn,M,y);y+=18;
+  // Bold "To:" label
+  doc.setFont("helvetica","bold");doc.text("To: ",M,y);
+  const toW=doc.getTextWidth("To: ");
+  doc.setFont("helvetica","normal");doc.text(co,M+toW,y);y+=14;
+  if(dept){doc.text(dept,M,y);y+=14;}
+  if(city){doc.text(city,M,y);y+=14;}
+  if(county){doc.text(county,M,y);y+=14;}
+  y+=6;
+  // Bold "Project:" label
+  doc.setFont("helvetica","bold");doc.text("Project: ",M,y);
+  const pW=doc.getTextWidth("Project: ");
+  doc.setFont("helvetica","normal");doc.text(proj,M+pW,y);y+=14;
+  if(period){
+    doc.setFont("helvetica","bold");doc.text("Project Period: ",M,y);
+    const ppW=doc.getTextWidth("Project Period: ");
+    doc.setFont("helvetica","normal");doc.text(period,M+ppW,y);y+=14;
+  }
+  y+=10;
+
+  // Collect checked presets
+  const scopePresets=[...document.querySelectorAll(".m-scope-preset:checked")].map(c=>c.value);
+  const qualPresets=[...document.querySelectorAll(".m-qual-preset:checked")].map(c=>c.value);
+  const allScopes=[...scopePresets,...mScopes.filter(s=>s.text).map(s=>s.text)];
+  const allQuals=[...qualPresets,...mQuals.filter(q=>q.text).map(q=>q.text)];
+
+  // Scope of Work
+  if(scopeIntro||allScopes.length||allQuals.length){
+    doc.setFont("helvetica","bold");doc.setFontSize(11);doc.setTextColor(20,20,20);
+    doc.text("Scope of Work",M,y);y+=15;
+    if(scopeIntro){
+      doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(40,40,40);
+      const sl=doc.splitTextToSize(scopeIntro,W-M*2);doc.text(sl,M,y);y+=sl.length*13+2;
+    }
+    if(allScopes.length){
+      doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(40,40,40);
+      allScopes.forEach(s=>{doc.text("• "+s,M+4,y);y+=13;});
+      y+=6;
+    }
+    if(allQuals.length){
+      doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(40,40,40);
+      doc.text("All assigned personnel have completed:",M,y);y+=13;
+      allQuals.forEach(q=>{doc.text("• "+q,M+4,y);y+=13;});
+    }
+    y+=14;
+  }
+
+  // Table with border
+  const TW=W-M*2;
+  const colW=[200,50,70,100,TW-200-50-70-100];
+  const colX=[M,M+200,M+250,M+320,M+420];
+  doc.setDrawColor(180,180,180);doc.setLineWidth(0.5);
+  // header row
+  doc.setFillColor(220,220,220);doc.rect(M,y,TW,18,"F");
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(20,20,20);
+  doc.text("Description",colX[0]+4,y+13);
+  doc.text("Unit",colX[1]+4,y+13);
+  doc.text("Qty",colX[2]+4,y+13);
+  doc.text("Rate (USD)",colX[3]+4,y+13);
+  doc.text("Total (USD)",colX[4]+4,y+13);
+  // header border
+  doc.rect(M,y,TW,18,"S");
+  y+=18;
+
+  let grand=0;
+  mRoster.forEach((row,i)=>{
+    const amt=mRowAmt(row);grand+=amt;
+    doc.setFillColor(255,255,255);doc.rect(M,y,TW,18,"FD");
+    doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(20,20,20);
+    doc.text(row.n,colX[0]+4,y+13);
+    doc.text("Hour",colX[1]+4,y+13);
+    const qtyStr=mMode==="flat"?String(row.qty):mMode==="hours"?`${row.qty} × ${row.hrs}`:String(row.qty);
+    doc.text(qtyStr,colX[2]+4,y+13);
+    doc.text((mMode==="flat"?fr:row.r).toFixed(2),colX[3]+4,y+13);
+    doc.text(amt.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}),colX[4]+4,y+13);
+    y+=18;
+  });
+  // Subtotal row
+  doc.setFillColor(255,255,255);doc.rect(M,y,TW,18,"FD");
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(20,20,20);
+  doc.text("Subtotal",colX[3]+4,y+13);
+  doc.text(grand.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}),colX[4]+4,y+13);
+  y+=18;
+  // Tax row
+  doc.setFillColor(255,255,255);doc.rect(M,y,TW,18,"FD");
+  doc.text("Tax",colX[3]+4,y+13);doc.text("N/A",colX[4]+4,y+13);
+  y+=18;
+  // Total row
+  doc.setFillColor(255,255,255);doc.rect(M,y,TW,18,"FD");
+  doc.setFont("helvetica","bold");
+  doc.text("Total",colX[3]+4,y+13);
+  doc.text(grand.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}),colX[4]+4,y+13);
+  y+=24;
+
+  // Overtime policy
+  const overtime=document.getElementById("m-overtime").value||"";
+  if(overtime){
+    doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(40,40,40);
+    const ol=doc.splitTextToSize("Overtime Policy: "+overtime,TW);
+    doc.text(ol,M,y);y+=ol.length*14+8;
+  }
+  y+=4;
+
+  // Payment terms + validity
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(40,40,40);
+  doc.text("Payment Terms: Net 30 days after completion or as mutually agreed.",M,y);y+=14;
+  doc.text("Validity: This quote is valid for 30 days from the date issued.",M,y);y+=14;
+
+  // Requirements note
+  if(req){
+    y+=4;
+    doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(40,40,40);
+    const rl=doc.splitTextToSize("Note: "+req,TW);
+    doc.text(rl,M,y);y+=rl.length*14+8;
+  }
+  y+=4;
+
+  // Signature block — pinned near bottom
+  const sigY=Math.max(y+20, 660);
+  const sigX=W/2+20;
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+  doc.text("Prepared by: Amalayon LLC",sigX,sigY);
+  doc.text("23025 N 15th Ave, Suite 205, Phoenix AZ 85027",sigX,sigY+13);
+  doc.text("Authorized Signature: ___________________________",sigX,sigY+30);
+  doc.text("Date: ___________________________",sigX,sigY+46);
+
+  doc.save(qn+"-Manpower-Quote.pdf");
+  saveToHistory({type:"mp",company:co,qnum:qn,total:grand,service:proj});
+}
+
+// ===== CONSULTING PDF =====
+function cGenPDF(){
+  if(!cItems.length){alert("請先新增至少一個服務項目");return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:"pt",format:"letter"});
+  const co=document.getElementById("c-co").value||"Client Company";
+  const dept=document.getElementById("c-dept").value||"";
+  const addr=document.getElementById("c-addr").value||"";
+  const qn=document.getElementById("c-qnum").value||"AMAL-CS-001";
+  const proj=document.getElementById("c-proj").value||"Safety Consulting";
+  const notes=document.getElementById("c-notes").value||"";
+  const W=612,M=50;let y=M;
+
+  addLogo(doc,W-M-160,y,160);
+  doc.setFont("helvetica","bold");doc.setFontSize(22);doc.setTextColor(20,20,20);
+  doc.text("QUOTE",W/2,y+30,{align:"center"});y+=70;
+
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+  doc.text("Date: "+fmtDate(),M,y);y+=14;
+  doc.text("Quote No.: "+qn,M,y);y+=14;
+  doc.text("To: "+co,M,y);y+=14;
+  if(dept){doc.text(dept,M,y);y+=14;}
+  if(addr){doc.text(addr,M,y);y+=14;}
+  doc.text("Project: "+proj,M,y);y+=18;
+
+  if(notes){
+    doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(20,20,20);
+    doc.text("Scope of Work:",M,y);y+=16;
+    doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+    const nl=doc.splitTextToSize(notes,W-M*2);doc.text(nl,M,y);y+=nl.length*13+12;
+  }
+
+  doc.setFillColor(220,220,220);doc.rect(M,y,W-M*2,18,"F");
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(20,20,20);
+  const C=[M+4,M+310,M+380,W-M-4];
+  doc.text("Description",C[0],y+13);doc.text("Qty",C[1],y+13);doc.text("Rate (USD)",C[2],y+13);doc.text("Total (USD)",C[3],y+13,{align:"right"});
+  y+=18;
+
+  let grand=0;
+  cItems.forEach((item,i)=>{
+    const amt=(item.qty||0)*(item.rate||0);grand+=amt;
+    if(i%2===0){doc.setFillColor(248,248,248);doc.rect(M,y,W-M*2,18,"F");}
+    doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(20,20,20);
+    const dl=doc.splitTextToSize(item.desc||"—",260);
+    doc.text(dl,C[0],y+13);
+    doc.text(String(item.qty||0),C[1],y+13);
+    doc.text("$"+(item.rate||0).toFixed(2),C[2],y+13);
+    doc.text("$"+amt.toLocaleString("en-US",{minimumFractionDigits:2}),C[3],y+13,{align:"right"});
+    y+=Math.max(18,dl.length*13);
+  });
+  doc.setDrawColor(180,180,180);doc.setLineWidth(0.5);doc.line(M,y,W-M,y);y+=14;
+
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(20,20,20);
+  doc.text("Subtotal: "+grand.toLocaleString("en-US",{minimumFractionDigits:2}),M,y);y+=14;
+  doc.text("Tax: N/A",M,y);y+=14;
+  doc.text("Total: "+grand.toLocaleString("en-US",{minimumFractionDigits:2}),M,y);y+=14;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);doc.setTextColor(80,80,80);
+  doc.text("Payment Terms: Net 30 days after invoice date or as mutually agreed.",M,y);y+=12;
+  doc.text("Validity: This quote is valid for 30 days from the date issued.",M,y);y+=24;
+
+  const sigY3=Math.max(y+20, 660);
+  const sigX=W/2+20;
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+  doc.text("Prepared by: Amalayon LLC",sigX,sigY3);
+  doc.text("23025 N 15th Ave, Suite 205, Phoenix AZ 85027",sigX,sigY3+13);
+  doc.text("Authorized Signature: ___________________________",sigX,sigY3+30);
+  doc.text("Date: ___________________________",sigX,sigY3+46);
+
+  doc.save(qn+"-Consulting-Quote.pdf");
+  saveToHistory({type:"con",company:co,qnum:qn,total:grand,service:proj});
+}
+
+// Init
+mAddScope();mAddQual();
+mAddRole("ap");mAddRole("jm");mAddRole("fm");
+mRenderScopes();mRenderQuals();
+mRecalc();eRecalc();
+cAddItem();cRenderItems();
+</script>
+</body>
+</html>
